@@ -41,7 +41,13 @@ def read_events(limit: Optional[int] = None) -> List[dict]:
     with log_path.open("r") as f:
         lines = [line.strip() for line in f if line.strip()]
 
-    events = [json.loads(line) for line in lines]
+    events = []
+    for line in lines:
+        try:
+            events.append(json.loads(line))
+        except json.JSONDecodeError:
+            continue
+
     if limit:
         events = events[-limit:]
     return events
