@@ -30,6 +30,9 @@ def encrypt(env_file, password, output):
 def decrypt(enc_file, password, output):
     """Decrypt an encrypted .env file."""
     output_path = output or ".env"
+    output_path_obj = Path(output_path)
+    if output_path_obj.exists():
+        click.confirm(f"'{output_path}' already exists. Overwrite?", abort=True)
     try:
         decrypt_env_file(enc_file, output_path, password)
         click.echo(f"Decrypted '{enc_file}' -> '{output_path}'")
