@@ -16,6 +16,15 @@ def set_profiles_dir(tmp_path, monkeypatch):
     monkeypatch.setenv("ENVOY_PROFILES_DIR", str(tmp_path / "profiles"))
 
 
+@pytest.fixture
+def saved_profile(tmp_path):
+    """Create and save a basic profile, returning its name and env file path."""
+    env_file = tmp_path / ".env"
+    env_file.write_text("KEY=value\n")
+    save_profile("fixture_profile", str(env_file))
+    return {"name": "fixture_profile", "env_path": env_file}
+
+
 def test_list_profiles_empty():
     assert list_profiles() == []
 
@@ -43,13 +52,10 @@ def test_load_profile_not_found():
         load_profile("ghost")
 
 
-def test_delete_profile(tmp_path):
-    env_file = tmp_path / ".env"
-    env_file.write_text("KEY=value\n")
-    save_profile("prod", str(env_file))
-    assert "prod" in list_profiles()
-    delete_profile("prod")
-    assert "prod" not in list_profiles()
+def test_delete_profile(saved_profile):
+    assert saved_profile["name"] in list_profiles()
+    delete_profile(saved_profile["name"])
+    assert saved_profile["name"] not in list_profiles()
 
 
 def test_delete_profile_not_found():
@@ -64,3 +70,9 @@ def test_multiple_profiles(tmp_path):
         save_profile(name, str(env_file))
     profiles = list_profiles()
     assert set(profiles) == {"dev", "staging", "prod"}
+
+
+def test_load_profile_defaults_to_unencrypted(saved_profile):
+    """Profiles saved without explicit encryption should default to unencrypted."""
+    profile = load_profile(saved_profile["name"])
+    assert profile["encrypted"] is False
