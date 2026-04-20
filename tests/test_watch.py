@@ -22,6 +22,15 @@ def test_get_mtime_returns_float(env_file):
     assert mtime > 0
 
 
+def test_get_mtime_reflects_file_update(env_file):
+    """Verify get_mtime returns an updated value after the file is touched."""
+    before = get_mtime(env_file)
+    new_time = before + 10
+    os.utime(env_file, (new_time, new_time))
+    after = get_mtime(env_file)
+    assert after > before
+
+
 def test_watch_file_raises_if_not_found(tmp_path):
     with pytest.raises(FileNotFoundError):
         watch_file(str(tmp_path / "missing.env"), callback=lambda p: None, max_iterations=1)
@@ -78,4 +87,12 @@ def test_make_print_callback_output(capsys):
     cb("/some/.env")
     captured = capsys.readouterr()
     assert "updated" in captured.out
+    assert "/some/.env" in captured.out
+
+
+def test_make_print_callback_default_label(capsys):
+    """Verify make_print_callback works without an explicit label."""
+    cb = make_print_callback()
+    cb("/some/.env")
+    captured = capsys.readouterr()
     assert "/some/.env" in captured.out
