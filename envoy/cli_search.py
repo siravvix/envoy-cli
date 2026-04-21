@@ -10,6 +10,14 @@ def search_cli():
     pass
 
 
+def _load_env_file(file):
+    """Load an env file, raising a ClickException if not found."""
+    try:
+        return read_env_file(file)
+    except FileNotFoundError:
+        raise click.ClickException(f"File not found: {file}")
+
+
 @search_cli.command()
 @click.argument("pattern")
 @click.option("--file", "-f", default=".env", show_default=True, help="Path to .env file.")
@@ -17,10 +25,7 @@ def search_cli():
 @click.option("--case-sensitive", is_flag=True, default=False, help="Enable case-sensitive matching.")
 def find(pattern, file, target, case_sensitive):
     """Search entries by PATTERN in keys, values, or both."""
-    try:
-        env = read_env_file(file)
-    except FileNotFoundError:
-        raise click.ClickException(f"File not found: {file}")
+    env = _load_env_file(file)
 
     if target == "key":
         results = search_keys(env, pattern, case_sensitive)
@@ -37,10 +42,7 @@ def find(pattern, file, target, case_sensitive):
 @click.option("--file", "-f", default=".env", show_default=True, help="Path to .env file.")
 def prefix(prefix, file):
     """Filter entries whose keys start with PREFIX."""
-    try:
-        env = read_env_file(file)
-    except FileNotFoundError:
-        raise click.ClickException(f"File not found: {file}")
+    env = _load_env_file(file)
 
     results = filter_by_prefix(env, prefix)
     click.echo(format_search_results(results))
