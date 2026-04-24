@@ -1,7 +1,7 @@
-"""Main CLI entry point for envoy."""
+"""Main CLI entry point — registers all sub-command groups."""
 
 import click
-from envoy.cli import cli
+from envoy.cli import cli, encrypt, decrypt, show, get
 from envoy.cli_diff import diff_cli
 from envoy.cli_merge import merge_cli
 from envoy.cli_template import template_cli
@@ -16,6 +16,10 @@ from envoy.cli_completion import completion_cli
 from envoy.cli_tags import tags_cli
 from envoy.cli_pin import pin_cli
 from envoy.cli_rename import rename_cli
+from envoy.cli_group import group_cli
+from envoy.cli_backup import backup_cli
+from envoy.cli_alias import alias_cli
+from envoy.cli_scope import scope_cli
 
 
 @click.group()
@@ -23,7 +27,10 @@ def main():
     """envoy — manage and sync .env files with encryption support."""
 
 
-main.add_command(cli)
+main.add_command(encrypt)
+main.add_command(decrypt)
+main.add_command(show)
+main.add_command(get)
 main.add_command(diff_cli)
 main.add_command(merge_cli)
 main.add_command(template_cli)
@@ -38,6 +45,10 @@ main.add_command(completion_cli)
 main.add_command(tags_cli)
 main.add_command(pin_cli)
 main.add_command(rename_cli)
+main.add_command(group_cli)
+main.add_command(backup_cli)
+main.add_command(alias_cli)
+main.add_command(scope_cli)
 
 
 if __name__ == "__main__":
