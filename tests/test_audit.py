@@ -63,3 +63,15 @@ def test_clear_events():
     assert len(read_events()) == 1
     clear_events()
     assert read_events() == []
+
+
+def test_log_event_timestamp_is_iso_format():
+    """Ensure logged timestamps conform to ISO 8601 format."""
+    from datetime import datetime
+
+    log_event("encrypt", "dev.env")
+    events = read_events()
+    timestamp = events[0]["timestamp"]
+    # Should not raise ValueError if the timestamp is valid ISO 8601
+    parsed = datetime.fromisoformat(timestamp)
+    assert parsed is not None
