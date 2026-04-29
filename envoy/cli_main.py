@@ -1,4 +1,4 @@
-"""Main CLI entry point that registers all sub-command groups."""
+"""Main CLI entry point for envoy — aggregates all sub-command groups."""
 
 import click
 from envoy.cli import cli as core_cli
@@ -25,27 +25,42 @@ from envoy.cli_interpolate import interpolate_cli
 from envoy.cli_chain import chain_cli
 from envoy.cli_mask import mask_cli
 from envoy.cli_promote import promote_cli
+from envoy.cli_freeze import freeze_cli
+from envoy.cli_resolve import resolve_cli
 
 
 @click.group()
-@click.version_option(package_name="envoy-cli")
+@click.version_option(prog_name="envoy")
 def main():
     """envoy — manage and sync .env files across environments."""
 
 
-_groups = [
-    core_cli, diff_cli, merge_cli, template_cli, rotate_cli, lint_cli,
-    export_cli, history_cli, transfer_cli, search_cli, validate_cli,
-    completion_cli, tags_cli, pin_cli, rename_cli, group_cli, backup_cli,
-    alias_cli, scope_cli, transform_cli, interpolate_cli, chain_cli,
-    mask_cli, promote_cli,
-]
-
-for _grp in _groups:
-    try:
-        main.add_command(_grp)
-    except Exception:
-        pass
+main.add_command(core_cli, name="env")
+main.add_command(diff_cli)
+main.add_command(merge_cli)
+main.add_command(template_cli)
+main.add_command(rotate_cli)
+main.add_command(lint_cli)
+main.add_command(export_cli)
+main.add_command(history_cli)
+main.add_command(transfer_cli)
+main.add_command(search_cli)
+main.add_command(validate_cli)
+main.add_command(completion_cli)
+main.add_command(tags_cli)
+main.add_command(pin_cli)
+main.add_command(rename_cli)
+main.add_command(group_cli)
+main.add_command(backup_cli)
+main.add_command(alias_cli)
+main.add_command(scope_cli)
+main.add_command(transform_cli)
+main.add_command(interpolate_cli)
+main.add_command(chain_cli)
+main.add_command(mask_cli)
+main.add_command(promote_cli)
+main.add_command(freeze_cli)
+main.add_command(resolve_cli)
 
 
 if __name__ == "__main__":
