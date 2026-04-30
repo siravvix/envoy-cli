@@ -8,7 +8,15 @@ def rotate_key(filepath: str, old_password: str, new_password: str) -> dict:
     """
     Re-encrypt an env file with a new password.
     Returns a summary dict with 'status' and 'keys_rotated'.
+
+    Raises:
+        ValueError: If old_password and new_password are identical.
+        FileNotFoundError: If the file does not exist.
+        DecryptionError: If the old password is incorrect.
     """
+    if old_password == new_password:
+        raise ValueError("New password must differ from the old password.")
+
     env = decrypt_env_file(filepath, old_password)
     encrypt_env_file(filepath, env, new_password)
     log_event(
@@ -24,6 +32,10 @@ def rotate_profile_key(
 ) -> dict:
     """
     Re-encrypt a named profile stored in the default profiles directory.
+
+    Raises:
+        ValueError: If old_password and new_password are identical.
+        FileNotFoundError: If the profile does not exist.
     """
     from envoy.profiles import get_profiles_dir
     import os
